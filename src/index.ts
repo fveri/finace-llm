@@ -17,7 +17,7 @@ const startup = async () => {
       "fetch-stock",
       {
         title: "Fetch Stock",
-        description: "Get candles data for a stock symbol for a given time interval. The interval can be a number of minutes, hours, days, weeks, or months. The amount is the number of candles to get. The symbol is the stock symbol to get candles for.",
+        description: "Gets the candles data for a stock symbol for a given time interval. The interval can be a number of minutes, hours, days, weeks, or months. The amount is the number of candles to get. The symbol is the stock symbol to get candles for.",
         inputSchema: {
           symbol: z.array(z.string()),
           interval: z.string(),
@@ -25,7 +25,7 @@ const startup = async () => {
         }
       },
       async ({ symbol, interval, amount }) => {
-        const candles = await getCandlesForSymbol(symbol, interval as TradingviewInterval, amount);
+        const candles = await getCandlesForSymbol(symbol, interval.toUpperCase() as TradingviewInterval, amount);
         return {
           content: [{ type: "text", text: JSON.stringify(candles) }]
         };
