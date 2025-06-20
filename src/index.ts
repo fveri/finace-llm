@@ -2,26 +2,30 @@ import { Candle, connect, getCandles } from 'tradingview-ws';
 import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import winston from "winston";
+
 
 const startup = async () => {
   try {
 
-    // Create an MCP server
+    // create the mcp server.
     const server = new McpServer({
-      name: "tradingview-mcp",
+      name: "finance-mcp",
       version: "0.0.1"
     });
 
     server.registerTool(
-      "fetch-symbol-candles",
+      "fetch-stock",
       {
-        title: "Fetch Symbol Candles",
-        description: "Get candles for a symbol",
-        inputSchema: { symbol: z.string() }
+        title: "Fetch Stock",
+        description: "Get candles data for a stock symbol for a given time interval. The interval can be a number of minutes, hours, days, weeks, or months. The amount is the number of candles to get. The symbol is the stock symbol to get candles for.",
+        inputSchema: {
+          symbol: z.array(z.string()),
+          interval: z.string(),
+          amount: z.number()
+        }
       },
-      async ({ symbol }) => {
-        const candles = await getCandlesForSymbol(symbol);
+      async ({ symbol, interval, amount }) => {
+        const candles = await getCandlesForSymbol(symbol, interval as TradingviewInterval, amount);
         return {
           content: [{ type: "text", text: JSON.stringify(candles) }]
         };
@@ -36,26 +40,28 @@ const startup = async () => {
   }
 };
 
-const getCandlesForSymbol = async (symbol: string): Promise<Candle[]> => {
+/**
+ * Get candles for a given symbol, interval, and amount from tradingview.
+ * @param symbols - The symbols to get candles for.
+ * @param interval - The interval to get candles for.
+ * @param amount - The amount of candles to get.
+ * @returns An array of candles.
+ */
+const getCandlesForSymbol = async (symbols: string[], interval: TradingviewInterval, amount: number): Promise<Candle[][]> => {
   const connection = await connect();
 
   const candles = await getCandles({
     connection,
-    symbols: [symbol],
-    timeframe: '1D',
-    amount: 300,
+    symbols: symbols,
+    timeframe: interval,
+    amount: amount,
   });
 
   await connection.close();
-  return candles[0];
+  return candles;
 };
-
-/*
-var candles = await test_websocket();
-console.log(`got ${candles[0].length} AAPL candles`)
-console.dir(candles[0][0], { depth: null })
-*/
 
 
 startup();
 
+type TradingviewInterval = number | '1D' | '1W' | '1M';
