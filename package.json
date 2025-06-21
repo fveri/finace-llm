@@ -1,0 +1,54 @@
+{
+  "name": "tradingview-mcp",
+  "version": "0.0.1",
+  "description": "mcp server for tradingview",
+  "homepage": "https://github.com/fveri/tradingview-mcp",
+  "bugs": {
+    "url": "https://github.com/fveri/tradingview-mcp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fveri/tradingview-mcp.git"
+  },
+  "author": "Huseyin Uslu <huseyin@int6ware.com> (http://www.int6ware.com)",
+  "keywords": [
+    "mcp",
+    "tradingview"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build -w",
+    "lint": "npm install && eslint",
+    "prettier": "npx prettier --write .",
+    "start": "npm run build && node dist/index.js",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --verbose",
+    "test:ci": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --ci --passWithNoTests",
+    "typecheck": "tsc --build"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.13.0",
+    "tradingview-ws": "0.0.3",
+    "zod": "3.25.67"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  },
+  "engines": {
+    "node": ">=22.16.0",
+    "npm": ">=10.9.2"
+  },
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64",
+    "ia32"
+  ]
+}
